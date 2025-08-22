@@ -27,14 +27,17 @@ export default function Navbar() {
               Products
             </Link>
           </li>
-          <li className="flex">
-            <Link
-              href="/login"
-              className="flex items-center px-4 -mb-1 border-b-2 dark:border-transparent"
-            >
-              Login
-            </Link>
-          </li>
+          {/* Dashboard link is only visible when the user is logged in */}
+          {session && (
+            <li className="flex">
+              <Link
+                href="/dashboard"
+                className="flex items-center px-4 -mb-1 border-b-2 dark:border-transparent"
+              >
+                Dashboard
+              </Link>
+            </li>
+          )}
         </ul>
 
         {/* Logo in the middle */}
