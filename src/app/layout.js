@@ -1,9 +1,9 @@
-// app/layout.jsx
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import NavbarWrapper from "@/components/NavbarWrapper"; // <-- Add this line
+import NavbarWrapper from "@/components/NavbarWrapper";
+import ClientToaster from "@/components/ClientToaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +28,9 @@ export default function RootLayout({ children }) {
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Providers>
-            <NavbarWrapper /> {/* <-- Add this line */}
+            <NavbarWrapper />
             {children}
+            <ClientToaster />
           </Providers>
         </ThemeProvider>
       </body>
