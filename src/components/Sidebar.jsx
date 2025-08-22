@@ -1,15 +1,26 @@
 // src/components/Sidebar.jsx
 "use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  MdOutlineDashboard,
+  MdAdd,
+  MdOutlineManageSearch,
+  MdArrowBack,
+} from "react-icons/md"; // Import the icons
 
 export default function Sidebar() {
   const pathname = usePathname();
 
   const links = [
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "Add Product", href: "/dashboard/add-product" },
-    { name: "Manage Products", href: "/dashboard/manage-products" }, // Example for a future page
+    { name: "Dashboard", href: "/dashboard", icon: MdOutlineDashboard },
+    { name: "Add Product", href: "/dashboard/add-product", icon: MdAdd },
+    {
+      name: "Manage Products",
+      href: "/dashboard/manage-products",
+      icon: MdOutlineManageSearch,
+    },
   ];
 
   return (
@@ -21,18 +32,29 @@ export default function Sidebar() {
             <li key={link.name}>
               <Link
                 href={link.href}
-                className={`flex items-center p-3 rounded-lg transition-colors ${
+                className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
                   pathname === link.href
                     ? "bg-violet-600 text-white"
                     : "hover:bg-gray-200 text-gray-800"
                 }`}
               >
-                {link.name}
+                {link.icon && <link.icon size={20} />}
+                <span>{link.name}</span>
               </Link>
             </li>
           ))}
         </ul>
       </nav>
+      {/* "Go Home" button at the bottom of the sidebar */}
+      <div className="mt-auto w-full">
+        <Link
+          href="/"
+          className="flex items-center space-x-3 p-3 rounded-lg transition-colors hover:bg-gray-200 text-gray-800"
+        >
+          <MdArrowBack size={20} />
+          <span>Go Home</span>
+        </Link>
+      </div>
     </aside>
   );
 }

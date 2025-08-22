@@ -1,10 +1,9 @@
-import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
 
 export default function Home() {
   return (
     <main>
-      <Navbar />
-      <section>Hero Section</section>
+      {/* <Hero /> */}
       <section>Product Highlights</section>
       <footer>Footer</footer>
     </main>

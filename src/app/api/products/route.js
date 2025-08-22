@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const client = await clientPromise;
-    const db = client.db("authifyShopData");
+    const db = client.db("ecomm_db");
 
     const products = await db.collection("products").find({}).toArray();
 

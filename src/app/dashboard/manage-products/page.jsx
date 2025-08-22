@@ -1,50 +1,58 @@
 // src/app/dashboard/manage-products/page.jsx
+"use client";
 
-import clientPromise from "@/lib/mongodb";
-import { notFound, redirect } from "next/navigation";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ObjectId } from "mongodb";
-import { revalidatePath } from "next/cache";
+import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
+import { deleteProduct as deleteProductAction } from "./product-actions"; // Import the Server Action
 
-// This function runs on the server to fetch data
-async function getProducts() {
-  try {
-    const client = await clientPromise;
-    const db = client.db("ecomm_db"); // Replace with your database name
-    const products = await db.collection("products").find({}).toArray();
-    // It's important to serialize the data because ObjectId is not a plain JSON object
-    return JSON.parse(JSON.stringify(products));
-  } catch (error) {
-    console.error("Failed to fetch products for management:", error);
-    return [];
+export default function ManageProductsPage() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [productToDeleteId, setProductToDeleteId] = useState(null);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/products");
+        const data = await res.json();
+        setProducts(data.products);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  const openModal = (productId) => {
+    setProductToDeleteId(productId);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setProductToDeleteId(null);
+    setModalOpen(false);
+  };
+
+  const handleDelete = async () => {
+    if (productToDeleteId) {
+      const result = await deleteProductAction(productToDeleteId);
+      if (result.success) {
+        // Optimistically update the UI
+        setProducts(
+          products.filter((product) => product._id !== productToDeleteId)
+        );
+      }
+      closeModal();
+    }
+  };
+
+  if (loading) {
+    return <div className="text-center py-10">Loading products...</div>;
   }
-}
-
-// This Server Action handles the deletion logic
-async function deleteProduct(formData) {
-  "use server";
-
-  const productId = formData.get("id");
-
-  try {
-    const client = await clientPromise;
-    const db = client.db("ecomm_db");
-
-    // Deletes the product from the database
-    await db.collection("products").deleteOne({ _id: new ObjectId(productId) });
-
-    console.log(`Product with ID ${productId} deleted successfully.`);
-  } catch (error) {
-    console.error("Failed to delete product:", error);
-  }
-
-  // Revalidates the current page to reflect the change
-  revalidatePath("/dashboard/manage-products");
-}
-
-// This is the main component for the page
-export default async function ManageProductsPage() {
-  const products = await getProducts();
 
   return (
     <div>
@@ -85,16 +93,12 @@ export default async function ManageProductsPage() {
                     >
                       Edit
                     </Link>
-                    {/* The form handles the delete action */}
-                    <form action={deleteProduct} className="inline-block">
-                      <input type="hidden" name="id" value={product._id} />
-                      <button
-                        type="submit"
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
-                    </form>
+                    <button
+                      onClick={() => openModal(product._id)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -102,6 +106,11 @@ export default async function ManageProductsPage() {
           </table>
         </div>
       )}
+      <DeleteConfirmationModal
+        isOpen={modalOpen}
+        onClose={closeModal}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }
