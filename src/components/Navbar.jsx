@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
-import { usePathname } from "next/navigation"; // Hook to get the current URL pathname
+import { usePathname } from "next/navigation";
 import { FiMenu, FiX, FiSun, FiMoon } from "react-icons/fi";
 import { FaUsers, FaHome, FaProductHunt, FaSlack } from "react-icons/fa";
 
@@ -13,7 +13,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const pathname = usePathname(); // Get the current URL pathname
+  const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
@@ -25,30 +25,29 @@ export default function Navbar() {
 
   const currentTheme = theme === "system" ? systemTheme : theme;
 
-  // This check prevents hydration mismatch errors in Next.js
   if (!mounted) {
     return null;
   }
 
-  // Determine the active link style
+  // Active vs default link classes
   const activeLinkClass =
-    "px-3 py-2 mx-3 mt-2 font-bold text-blue-500 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center";
+    "px-3 py-2 mx-3 mt-2 font-bold text-blue-500 transition-colors duration-300 transform rounded-md lg:mt-0 hover:bg-gray-100/20 dark:hover:bg-gray-700/20 flex items-center";
   const defaultLinkClass =
-    "px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center";
+    "px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100/20 dark:hover:bg-gray-700/20 flex items-center";
 
   return (
-    <nav className="relative bg-white shadow dark:bg-gray-800">
-      <div className="container px-6 py-4 mx-auto">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-transparent backdrop-blur-md border-b border-white/10">
+      <div className="container px-6  mx-auto">
         <div className="lg:flex lg:items-center lg:justify-between">
+          {/* Logo */}
           <div className="flex items-center justify-between">
-            {/* Logo */}
             <Link
               href="/"
-              className="flex items-center p-2 rounded-lg transition-colors duration-300 transform hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="flex items-center p-2 rounded-lg transition-colors duration-300 transform hover:bg-gray-100/20 dark:hover:bg-gray-700/20"
             >
               <img
-                className="w-auto h-6 sm:h-7"
-                src="https://merakiui.com/images/full-logo.svg"
+                className="w-auto h-10"
+                src="https://i.ibb.co.com/9mQSJ8D7/Blue-3-D-Abstract-Letter-S-Logo-1-removebg-preview.png"
                 alt="Authify Logo"
               />
             </Link>
@@ -58,7 +57,7 @@ export default function Navbar() {
               <button
                 onClick={toggleMobileMenu}
                 type="button"
-                className="text-gray-500 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none focus:text-gray-600 dark:focus:text-gray-400"
+                className="text-gray-500 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none"
                 aria-label="toggle menu"
               >
                 {isOpen ? (
@@ -70,9 +69,9 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Desktop and Mobile Menu */}
+          {/* Menu */}
           <div
-            className={`absolute inset-x-0 z-20 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 lg:mt-0 lg:p-0 lg:top-0 lg:relative lg:bg-transparent lg:w-auto lg:opacity-100 lg:translate-x-0 lg:flex lg:items-center ${
+            className={`absolute inset-x-0 z-20 w-full px-6 py-4 duration-300 ease-in-out bg-transparent backdrop-blur-md lg:mt-0 lg:p-0 lg:top-0 lg:relative lg:w-auto lg:opacity-100 lg:translate-x-0 lg:flex lg:items-center ${
               isOpen
                 ? "translate-x-0 opacity-100"
                 : "-translate-x-full opacity-0"
@@ -120,9 +119,8 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Authentication and Theme Toggle */}
-            <div className="flex items-center  justify-center mt-4 lg:mt-0">
-              {/* Conditional Rendering for Auth Buttons */}
+            {/* Authentication + Theme Toggle */}
+            <div className="flex items-center justify-center mt-4 lg:mt-0">
               {session ? (
                 <div className="flex items-center -mx-3">
                   {session.user?.image && (
@@ -139,26 +137,26 @@ export default function Navbar() {
                       signOut();
                       toggleMobileMenu();
                     }}
-                    className="block w-full px-2 py-2 mx-3 mt-2 font-semibold text-center text-gray-700 transition-colors duration-300 transform rounded-md dark:text-gray-200 lg:mt-0 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="block w-full px-2 py-2 mx-3 mt-2 font-semibold text-center text-gray-700 dark:text-gray-200 lg:mt-0 hover:bg-gray-100/20 dark:hover:bg-gray-700/20 rounded-md"
                   >
                     Logout
                   </button>
                 </div>
               ) : (
                 <Link href="/login" onClick={toggleMobileMenu}>
-                  <button className="block w-full px-2 py-2 mx-3 mt-2 font-semibold text-center text-gray-700 transition-colors duration-300 transform rounded-md dark:text-gray-200 lg:mt-0 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <button className="block w-full px-2 py-2 mx-3 mt-2 font-semibold text-center text-gray-700 dark:text-gray-200 lg:mt-0 hover:bg-gray-100/20 dark:hover:bg-gray-700/20 rounded-md">
                     Log in
                   </button>
                 </Link>
               )}
 
-              {/* Theme Toggle Button */}
+              {/* Theme Toggle */}
               <button
                 onClick={() => {
                   setTheme(currentTheme === "dark" ? "light" : "dark");
                   toggleMobileMenu();
                 }}
-                className="flex items-center w-full p-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 lg:w-auto"
+                className="flex items-center w-full p-2 text-gray-700 dark:text-gray-200 lg:w-auto hover:bg-gray-100/20 dark:hover:bg-gray-700/20 rounded-md"
               >
                 {currentTheme === "dark" ? (
                   <FiSun className="w-5 h-5 mr-2" />
